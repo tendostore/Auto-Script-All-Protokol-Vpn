@@ -15,6 +15,7 @@
 
 AUTO SCRIPT TENDO STORE - PLATINUM LTS EDITION
 Versi: v.16.02.26 LTS | Creator: Tendo Store
+
 Skrip ini adalah solusi all-in-one manajemen VPS yang dirancang untuk performa tinggi, stabilitas jangka panjang (LTS), dan kemudahan penggunaan. Menggabungkan protokol modern X-ray (VLESS) dan ZIVPN (UDP) dalam satu dashboard yang estetis dan informatif.
 1. KEUNGGULAN VISUAL & ANTARMUKA (UI/UX PREMIUM)
 Zero Margin Layout: Tampilan dashboard yang presisi dan rapi, diatur mentok ke sisi kiri terminal (zero margin) untuk memaksimalkan ruang baca tanpa spasi yang tidak perlu.
