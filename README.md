@@ -52,4 +52,9 @@ Script ini bukan sekadar alat instalasi VPN biasa, melainkan sistem manajemen se
 Copy dan paste perintah di bawah ini ke terminal VPS (Wajib **Ubuntu 20.04 - 22.04**):
 
 ```bash
-sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt update && apt install -y bzip2 gzip coreutils screen curl && wget https://raw.githubusercontent.com/tendostore/Tendo-Script-Auto-Installer-X-ray-ZIVPN/main/setup && chmod +x setup && ./setup
+sysctl -w net.ipv6.conf.all.disable_ipv6=1 && \
+sysctl -w net.ipv6.conf.default.disable_ipv6=1 && \
+apt update && apt install -y bzip2 gzip coreutils screen curl && \
+curl -H "Authorization: token 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" \
+-L https://raw.githubusercontent.com/tendostore/Tendo-Script-Auto-Installer-X-ray-ZIVPN/main/setup \
+-o setup && chmod +x setup && ./setup
