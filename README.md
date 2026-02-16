@@ -1,6 +1,6 @@
 # 🚀 Auto Script X-ray & ZIVPN (Platinum LTS Edition)
 
-**Script Final v.100 (Platinum LTS)** - Solusi manajemen VPS All-in-One yang stabil, cepat, dan estetis.
+**Script Final v.101 (Platinum LTS)** - Solusi manajemen VPS All-in-One yang stabil, cepat, dan estetis.
 **By:** Tendo Store
 
 ![Banner](https://img.shields.io/badge/Version-v.100%20LTS-blue?style=for-the-badge)
