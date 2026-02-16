@@ -3,7 +3,7 @@
 **Script Final v.101 (Platinum LTS)** - Solusi manajemen VPS All-in-One yang stabil, cepat, dan estetis.
 **By:** Tendo Store
 
-![Banner](https://img.shields.io/badge/Version-v.100%20LTS-blue?style=for-the-badge)
+![Banner](https://img.shields.io/badge/Version-v.101%20LTS-blue?style=for-the-badge)
 ![Support](https://img.shields.io/badge/Support-Lifetime-green?style=for-the-badge)
 
 ## 🔥 Fitur Unggulan
