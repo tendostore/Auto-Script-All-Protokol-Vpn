@@ -1205,7 +1205,10 @@ fi
 if [[ "$ACTION" == "create" ]]; then
     if (( DAYS > 5 )); then DAYS=5; fi
     exp_date=$(date -d "+$DAYS days" +"%Y-%m-%d")
-    limit=2; quota=0; usage="0.00"; str_quota="Unlimited"
+    limit=2; usage="0.00"
+    
+    # OTOMATIS SET KUOTA X-RAY MENJADI 100GB
+    quota=100; str_quota="100 GB"
     MSG_BOT=""
     
     if [[ "$PROTO" == "ssh" ]]; then
@@ -1292,6 +1295,7 @@ except:
     exit(1)
 
 bot = telebot.TeleBot(TOKEN)
+creation_data = {}
 
 @bot.message_handler(commands=['menu'])
 def send_welcome(message):
@@ -1317,6 +1321,9 @@ def handle_other_text(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
+    chat_id = call.message.chat.id
+    msg_id = call.message.message_id
+
     if call.data == "menu_xray":
         markup = types.InlineKeyboardMarkup(row_width=2)
         markup.add(
@@ -1325,7 +1332,7 @@ def callback_query(call):
             types.InlineKeyboardButton("🔹 TROJAN", callback_data="proto_trojan"),
             types.InlineKeyboardButton("🔙 Kembali", callback_data="menu_main")
         )
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Silakan pilih protokol X-ray:", reply_markup=markup)
+        bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text="Silakan pilih protokol X-ray:", reply_markup=markup)
     
     elif call.data == "menu_main":
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -1339,11 +1346,11 @@ def callback_query(call):
             types.InlineKeyboardButton("🛒 Order Premium", url="https://wa.me/message/MAROWFSVEZWDL1"),
             types.InlineKeyboardButton("📞 Hubungi Admin", url="https://t.me/tendo_32")
         )
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Selamat datang! Silakan pilih menu interaktif di bawah ini untuk membuat akun VPN free.", reply_markup=markup)
+        bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text="Selamat datang! Silakan pilih menu interaktif di bawah ini untuk membuat akun VPN free.", reply_markup=markup)
     
     elif call.data == "info_akun":
         res = subprocess.run(["/usr/local/bin/client-bot-helper.sh", "info"], capture_output=True, text=True)
-        bot.send_message(call.message.chat.id, res.stdout, parse_mode="HTML")
+        bot.send_message(chat_id, res.stdout, parse_mode="HTML")
 
     elif call.data == "donasi":
         donasi_text = """•────────────────────• 
@@ -1353,50 +1360,81 @@ def callback_query(call):
 ❑ 082224460678 𝗚𝗢𝗣𝗔𝗬
 ❑ 082224460678 𝗦𝗛𝗢𝗣𝗘𝗘𝗣𝗔𝗬
 •────────────────────•"""
-        bot.send_photo(call.message.chat.id, "https://i.postimg.cc/9QXppGXs/Kode-QRIS-Tendo-Store-Jepara.png", caption=donasi_text)
+        bot.send_photo(chat_id, "https://i.postimg.cc/9QXppGXs/Kode-QRIS-Tendo-Store-Jepara.png", caption=donasi_text)
 
     elif call.data.startswith("proto_"):
         proto = call.data.split("_")[1]
-        msg = bot.send_message(call.message.chat.id, f"💬 <b>MEMBUAT AKUN {proto.upper()}</b>\n\nSilakan ketik Username yang Anda inginkan (tanpa spasi):", parse_mode="HTML")
-        bot.register_next_step_handler(msg, process_username, proto)
+        creation_data[chat_id] = {'proto': proto}
+        msg = bot.send_message(chat_id, f"💬 <b>MEMBUAT AKUN {proto.upper()}</b>\n\nSilakan ketik Username yang Anda inginkan (tanpa spasi):", parse_mode="HTML")
+        bot.register_next_step_handler(msg, process_username)
 
-def process_username(message, proto):
+    elif call.data.startswith("dur_"):
+        if chat_id not in creation_data: return
+        days = call.data.split("_")[1]
+        creation_data[chat_id]['days'] = days
+        finalize_creation(chat_id, msg_id)
+
+def process_username(message):
+    chat_id = message.chat.id
+    if chat_id not in creation_data: return
+    
     username = message.text.strip().replace(" ", "")
+    proto = creation_data[chat_id]['proto']
+    
     if not username:
-        bot.send_message(message.chat.id, "❌ Username tidak valid. Silakan ulangi /menu")
+        bot.send_message(chat_id, "❌ Username tidak valid. Silakan ulangi /menu")
         return
         
     res = subprocess.run(["/usr/local/bin/client-bot-helper.sh", "check", proto, username], capture_output=True, text=True)
     if "EXISTS" in res.stdout:
-        bot.send_message(message.chat.id, f"❌ Username <b>{username}</b> sudah digunakan! Silakan ulangi /menu dan gunakan nama lain.", parse_mode="HTML")
+        bot.send_message(chat_id, f"❌ Username <b>{username}</b> sudah digunakan! Silakan ulangi /menu dan gunakan nama lain.", parse_mode="HTML")
         return
         
-    if proto == "ssh":
-        msg = bot.send_message(message.chat.id, f"🔑 Username <b>{username}</b> tersedia!\n\nSilakan ketik <b>Password</b> untuk akun SSH ini:", parse_mode="HTML")
-        bot.register_next_step_handler(msg, ask_duration_ssh, proto, username)
-    else:
-        msg = bot.send_message(message.chat.id, f"✅ Username <b>{username}</b> tersedia!\n\nMasukkan durasi masa aktif yang diinginkan dalam hari (Maksimal 5 hari):", parse_mode="HTML")
-        bot.register_next_step_handler(msg, execute_creation, proto, username, username)
+    creation_data[chat_id]['user'] = username
 
-def ask_duration_ssh(message, proto, username):
+    if proto == "ssh":
+        msg = bot.send_message(chat_id, f"🔑 Username <b>{username}</b> tersedia!\n\nSilakan ketik <b>Password</b> untuk akun SSH ini:", parse_mode="HTML")
+        bot.register_next_step_handler(msg, process_password_ssh)
+    else:
+        creation_data[chat_id]['pass'] = username
+        ask_duration(chat_id)
+
+def process_password_ssh(message):
+    chat_id = message.chat.id
+    if chat_id not in creation_data: return
     password = message.text.strip()
     if not password:
-        bot.send_message(message.chat.id, "❌ Password tidak valid. Silakan ulangi /menu")
+        bot.send_message(chat_id, "❌ Password tidak valid. Silakan ulangi /menu")
         return
-    msg = bot.send_message(message.chat.id, f"✅ Password diterima!\n\nMasukkan durasi masa aktif yang diinginkan dalam hari (Maksimal 5 hari):", parse_mode="HTML")
-    bot.register_next_step_handler(msg, execute_creation, proto, username, password)
+    creation_data[chat_id]['pass'] = password
+    ask_duration(chat_id)
 
-def execute_creation(message, proto, username, password):
-    try:
-        days = int(message.text.strip())
-        if days > 5: days = 5
-        if days < 1: days = 1
-    except:
-        days = 1
-        
-    bot.send_message(message.chat.id, f"⏳ Sedang memproses pembuatan akun {proto.upper()} untuk {username} ({days} Hari)...")
-    res = subprocess.run(["/usr/local/bin/client-bot-helper.sh", "create", proto, username, password, str(days)], capture_output=True, text=True)
-    bot.send_message(message.chat.id, res.stdout.replace('\\n', '\n'), parse_mode="HTML")
+def ask_duration(chat_id):
+    markup = types.InlineKeyboardMarkup(row_width=5)
+    markup.add(
+        types.InlineKeyboardButton("1 Hari", callback_data="dur_1"),
+        types.InlineKeyboardButton("2 Hari", callback_data="dur_2"),
+        types.InlineKeyboardButton("3 Hari", callback_data="dur_3"),
+        types.InlineKeyboardButton("4 Hari", callback_data="dur_4"),
+        types.InlineKeyboardButton("5 Hari", callback_data="dur_5")
+    )
+    bot.send_message(chat_id, "✅ Data diterima!\n\nPilih durasi masa aktif (Maks 5 Hari):", reply_markup=markup)
+
+def finalize_creation(chat_id, msg_id):
+    data = creation_data.pop(chat_id, None)
+    if not data: return
+
+    proto = data['proto']
+    user = data['user']
+    passwd = data['pass']
+    days = data.get('days', '1')
+
+    # Kuota otomatis 100GB tidak perlu disisipkan di pesan agar tidak rancu
+    msg_text = f"⏳ Sedang memproses pembuatan akun {proto.upper()} untuk {user} ({days} Hari)..."
+
+    bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg_text)
+    res = subprocess.run(["/usr/local/bin/client-bot-helper.sh", "create", proto, user, passwd, days], capture_output=True, text=True)
+    bot.send_message(chat_id, res.stdout.replace('\\n', '\n'), parse_mode="HTML")
 
 bot.infinity_polling()
 EOF
@@ -1418,7 +1456,7 @@ EOF
     systemctl enable tendo-client-bot >/dev/null 2>&1
     systemctl restart tendo-client-bot >/dev/null 2>&1
     
-    echo -e "${GREEN}Bot Client berhasil diinstall dan dijalankan!${NC}"
+    echo -e "${GREEN}Bot Client berhasil diinstall dan dijalankan dengan versi tombol inline!${NC}"
     echo -e "${YELLOW}Silakan chat bot kamu di Telegram dan ketik /menu${NC}"
     sleep 3
 }
@@ -1752,7 +1790,11 @@ function vmess_menu() {
                if ! check_exists "$u"; then continue; fi
                read -p " Password (ID/UUID) : " p; [[ -z "$p" ]] && p=$(uuidgen); id="$p"
                if ! check_uuid "$id"; then continue; fi
-               read -p " Expired (days): " ex; [[ -z "$ex" ]] && ex=30; read -p " Limit IP (0 for unlimited): " limit; [[ -z "$limit" ]] && limit=0; read -p " Quota Bandwidth GB (0 for unlimited): " quota; [[ -z "$quota" ]] && quota=0
+               read -p " Expired (days): " ex; [[ -z "$ex" ]] && ex=30; read -p " Limit IP (0 for unlimited): " limit; [[ -z "$limit" ]] && limit=0
+               
+               # KUOTA OTOMATIS 100GB
+               quota=100
+               
                exp_date=$(date -d "+$ex days" +"%Y-%m-%d"); jq --arg u "$u" --arg id "$id" '(.inbounds[] | select(.protocol == "vmess")).settings.clients += [{"id":$id,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$id|$exp_date|$limit|ACTIVE|$quota" >> $D_VMESS; echo "0 0" > "/usr/local/etc/xray/quota/$u"
                DMN=$(cat /usr/local/etc/xray/domain)
                ws_tls=$(echo "{\"v\":\"2\",\"ps\":\"${u}\",\"add\":\"${DMN}\",\"port\":\"443\",\"id\":\"${id}\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"${DMN}\",\"path\":\"/vmess\",\"tls\":\"tls\",\"sni\":\"${DMN}\"}" | base64 -w 0)
@@ -1778,7 +1820,9 @@ function vmess_menu() {
                show_account_xray "VMESS" "$u" "$DMN" "$id" "$exp_date" "$limit" "$quota" "$usage_gb" "vmess://$ws_tls" "vmess://$ws_ntls" "vmess://$grpc_tls" "vmess://$upg_tls" "vmess://$upg_ntls";;
             5) u="trial-$(tr -dc a-z0-9 </dev/urandom | head -c 5)"; echo -e " Username (Trial): ${GREEN}$u${NC}"; p="$u"; id="$p"; read -p " Duration (e.g., 10m, 1h): " dur;
                if [[ "$dur" == *m ]]; then add_str="+${dur%m} minutes"; elif [[ "$dur" == *h ]]; then add_str="+${dur%h} hours"; else add_str="+1 hours"; fi
-               exp_date=$(date -d "$add_str" +"%Y-%m-%d %H:%M:%S"); limit=1; quota=0; jq --arg u "$u" --arg id "$id" '(.inbounds[] | select(.protocol == "vmess")).settings.clients += [{"id":$id,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$id|$exp_date|$limit|ACTIVE|$quota" >> $D_VMESS; echo "0 0" > "/usr/local/etc/xray/quota/$u"
+               
+               # TRIAL JUGA OTOMATIS 100GB
+               exp_date=$(date -d "$add_str" +"%Y-%m-%d %H:%M:%S"); limit=1; quota=100; jq --arg u "$u" --arg id "$id" '(.inbounds[] | select(.protocol == "vmess")).settings.clients += [{"id":$id,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$id|$exp_date|$limit|ACTIVE|$quota" >> $D_VMESS; echo "0 0" > "/usr/local/etc/xray/quota/$u"
                DMN=$(cat /usr/local/etc/xray/domain)
                ws_tls=$(echo "{\"v\":\"2\",\"ps\":\"${u}\",\"add\":\"${DMN}\",\"port\":\"443\",\"id\":\"${id}\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"${DMN}\",\"path\":\"/vmess\",\"tls\":\"tls\",\"sni\":\"${DMN}\"}" | base64 -w 0)
                ws_ntls=$(echo "{\"v\":\"2\",\"ps\":\"${u}\",\"add\":\"${DMN}\",\"port\":\"80\",\"id\":\"${id}\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"${DMN}\",\"path\":\"/vmess\",\"tls\":\"\",\"sni\":\"\"}" | base64 -w 0)
@@ -1825,7 +1869,11 @@ function vless_menu() {
                if ! check_exists "$u"; then continue; fi
                read -p " Password (ID/UUID) : " p; [[ -z "$p" ]] && p=$(uuidgen); id="$p"
                if ! check_uuid "$id"; then continue; fi
-               read -p " Expired (days): " ex; [[ -z "$ex" ]] && ex=30; read -p " Limit IP (0 for unlimited): " limit; [[ -z "$limit" ]] && limit=0; read -p " Quota Bandwidth GB (0 for unlimited): " quota; [[ -z "$quota" ]] && quota=0
+               read -p " Expired (days): " ex; [[ -z "$ex" ]] && ex=30; read -p " Limit IP (0 for unlimited): " limit; [[ -z "$limit" ]] && limit=0
+               
+               # KUOTA OTOMATIS 100GB
+               quota=100
+               
                exp_date=$(date -d "+$ex days" +"%Y-%m-%d"); jq --arg u "$u" --arg id "$id" '(.inbounds[] | select(.protocol == "vless")).settings.clients += [{"id":$id,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$id|$exp_date|$limit|ACTIVE|$quota" >> $D_VLESS; echo "0 0" > "/usr/local/etc/xray/quota/$u"
                DMN=$(cat /usr/local/etc/xray/domain)
                ws_tls="vless://${id}@${DMN}:443?path=%2Fvless&security=tls&encryption=none&host=${DMN}&type=ws&sni=${DMN}#${u}"
@@ -1851,7 +1899,9 @@ function vless_menu() {
                show_account_xray "VLESS" "$u" "$DMN" "$id" "$exp_date" "$limit" "$quota" "$usage_gb" "$ws_tls" "$ws_ntls" "$grpc_tls" "$upg_tls" "$upg_ntls";;
             5) u="trial-$(tr -dc a-z0-9 </dev/urandom | head -c 5)"; echo -e " Username (Trial): ${GREEN}$u${NC}"; p="$u"; id="$p"; read -p " Duration (e.g., 10m, 1h): " dur;
                if [[ "$dur" == *m ]]; then add_str="+${dur%m} minutes"; elif [[ "$dur" == *h ]]; then add_str="+${dur%h} hours"; else add_str="+1 hours"; fi
-               exp_date=$(date -d "$add_str" +"%Y-%m-%d %H:%M:%S"); limit=1; quota=0; jq --arg u "$u" --arg id "$id" '(.inbounds[] | select(.protocol == "vless")).settings.clients += [{"id":$id,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$id|$exp_date|$limit|ACTIVE|$quota" >> $D_VLESS; echo "0 0" > "/usr/local/etc/xray/quota/$u"
+               
+               # TRIAL JUGA OTOMATIS 100GB
+               exp_date=$(date -d "$add_str" +"%Y-%m-%d %H:%M:%S"); limit=1; quota=100; jq --arg u "$u" --arg id "$id" '(.inbounds[] | select(.protocol == "vless")).settings.clients += [{"id":$id,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$id|$exp_date|$limit|ACTIVE|$quota" >> $D_VLESS; echo "0 0" > "/usr/local/etc/xray/quota/$u"
                DMN=$(cat /usr/local/etc/xray/domain)
                ws_tls="vless://${id}@${DMN}:443?path=%2Fvless&security=tls&encryption=none&host=${DMN}&type=ws&sni=${DMN}#${u}"
                ws_ntls="vless://${id}@${DMN}:80?path=%2Fvless&security=none&encryption=none&host=${DMN}&type=ws#${u}"
@@ -1898,7 +1948,11 @@ function trojan_menu() {
                if ! check_exists "$u"; then continue; fi
                read -p " Password : " p; [[ -z "$p" ]] && p="$u"; pass="$p"
                if ! check_uuid "$pass"; then continue; fi
-               read -p " Expired (days): " ex; [[ -z "$ex" ]] && ex=30; read -p " Limit IP (0 for unlimited): " limit; [[ -z "$limit" ]] && limit=0; read -p " Quota Bandwidth GB (0 for unlimited): " quota; [[ -z "$quota" ]] && quota=0
+               read -p " Expired (days): " ex; [[ -z "$ex" ]] && ex=30; read -p " Limit IP (0 for unlimited): " limit; [[ -z "$limit" ]] && limit=0
+               
+               # KUOTA OTOMATIS 100GB
+               quota=100
+               
                exp_date=$(date -d "+$ex days" +"%Y-%m-%d"); jq --arg p "$pass" --arg u "$u" '(.inbounds[] | select(.protocol == "trojan")).settings.clients += [{"password":$p,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$pass|$exp_date|$limit|ACTIVE|$quota" >> $D_TROJAN; echo "0 0" > "/usr/local/etc/xray/quota/$u"
                DMN=$(cat /usr/local/etc/xray/domain)
                ws_tls="trojan://${pass}@${DMN}:443?path=%2Ftrojan&security=tls&host=${DMN}&type=ws&sni=${DMN}#${u}"
@@ -1922,7 +1976,9 @@ function trojan_menu() {
                show_account_xray "TROJAN" "$u" "$DMN" "$pass" "$exp_date" "$limit" "$quota" "$usage_gb" "$ws_tls" "$ws_ntls" "$grpc_tls" "$upg_tls" "";;
             5) u="trial-$(tr -dc a-z0-9 </dev/urandom | head -c 5)"; echo -e " Username (Trial): ${GREEN}$u${NC}"; p="$u"; pass="$p"; read -p " Duration (e.g., 10m, 1h): " dur;
                if [[ "$dur" == *m ]]; then add_str="+${dur%m} minutes"; elif [[ "$dur" == *h ]]; then add_str="+${dur%h} hours"; else add_str="+1 hours"; fi
-               exp_date=$(date -d "$add_str" +"%Y-%m-%d %H:%M:%S"); limit=1; quota=0; jq --arg p "$pass" --arg u "$u" '(.inbounds[] | select(.protocol == "trojan")).settings.clients += [{"password":$p,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$pass|$exp_date|$limit|ACTIVE|$quota" >> $D_TROJAN; echo "0 0" > "/usr/local/etc/xray/quota/$u"
+               
+               # TRIAL JUGA OTOMATIS 100GB
+               exp_date=$(date -d "$add_str" +"%Y-%m-%d %H:%M:%S"); limit=1; quota=100; jq --arg p "$pass" --arg u "$u" '(.inbounds[] | select(.protocol == "trojan")).settings.clients += [{"password":$p,"email":$u,"level":0}]' $CONFIG > /tmp/x && mv /tmp/x $CONFIG; echo "$u|$pass|$exp_date|$limit|ACTIVE|$quota" >> $D_TROJAN; echo "0 0" > "/usr/local/etc/xray/quota/$u"
                DMN=$(cat /usr/local/etc/xray/domain)
                ws_tls="trojan://${pass}@${DMN}:443?path=%2Ftrojan&security=tls&host=${DMN}&type=ws&sni=${DMN}#${u}"
                ws_ntls="trojan://${pass}@${DMN}:80?path=%2Ftrojan&security=none&host=${DMN}&type=ws#${u}"
