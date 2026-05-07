@@ -58,4 +58,3 @@ apt update && apt install -y bzip2 gzip coreutils screen curl && \
 curl -s -H "Authorization: Bearer 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" \
 -L https://raw.githubusercontent.com/tendostore/Tendo-Script-Auto-Installer-X-ray-ZIVPN/main/install.sh \
 -o install.sh && chmod +x install.sh && ./install.sh
-
