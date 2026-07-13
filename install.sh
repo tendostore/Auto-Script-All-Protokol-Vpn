@@ -2057,3 +2057,4 @@ print_ok "Finalisasi Script"
 echo -e "\n${GREEN}=================================================${NC}"
 echo -e "${YELLOW}   Instalasi Selesai! Ketik: ${WHITE}menu${YELLOW} untuk mulai  ${NC}"
 echo -e "${GREEN}=================================================${NC}\n"
+
