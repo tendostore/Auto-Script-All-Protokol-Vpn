@@ -105,16 +105,9 @@ Script ini menangani seluruh proses berat secara otomatis: instalasi dependency,
 ## 🚀 Instalasi
 
 ```bash
-# 1. Update sistem (opsional tapi disarankan)
-apt update && apt upgrade -y
-
-# 2. Download script
-wget -O install.sh https://raw.githubusercontent.com/tendostore/Auto-Script-All-Protokol-Vpn/main/install.sh
-
-# 3. Beri izin eksekusi
+apt update -y && apt install -y curl
+curl -fsSL -O https://raw.githubusercontent.com/tendostore/Auto-Script-All-Protokol-Vpn/main/install.sh
 chmod +x install.sh
-
-# 4. Jalankan sebagai root
 ./install.sh
 ```
 
