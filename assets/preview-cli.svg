@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="620" viewBox="0 0 960 620">
+<rect width="960" height="620" rx="14" fill="#0d1117"/>
+<rect x="0" y="0" width="960" height="42" rx="14" fill="#161b22"/>
+<rect x="0" y="28" width="960" height="14" fill="#161b22"/>
+<circle cx="26" cy="21" r="6.5" fill="#f85149"/>
+<circle cx="48" cy="21" r="6.5" fill="#d29922"/>
+<circle cx="70" cy="21" r="6.5" fill="#3fb950"/>
+<rect x="470" y="266" width="22" height="16" rx="2" fill="#2b3648"/>
+<rect x="494" y="266" width="22" height="16" rx="2" fill="#f85149"/>
+<rect x="518" y="266" width="22" height="16" rx="2" fill="#3fb950"/>
+<rect x="542" y="266" width="22" height="16" rx="2" fill="#e3b341"/>
+<rect x="566" y="266" width="22" height="16" rx="2" fill="#58a6ff"/>
+<rect x="590" y="266" width="22" height="16" rx="2" fill="#a371f7"/>
+<rect x="614" y="266" width="22" height="16" rx="2" fill="#39c5cf"/>
+<rect x="638" y="266" width="22" height="16" rx="2" fill="#e6edf3"/>
+<rect x="30" y="378" width="900" height="176" rx="10" fill="#161b22" stroke="#30363d"/>
+<line x1="44" y1="416" x2="916" y2="416" stroke="#30363d"/>
+<text x="480" y="26" text-anchor="middle" fill="#8b949e" font-size="13" font-family="'JetBrains Mono','Courier New',monospace" xml:space="preserve">root@ubuntu: ~</text>
+<text x="30" y="80" fill="#ff6b81" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">##### ##### #   # ####   ### </text>
+<text x="30" y="100" fill="#ff6b81" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">  #   #     ##  # #   # #   #</text>
+<text x="30" y="120" fill="#ff6b81" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">  #   ###   # # # #   # #   #</text>
+<text x="30" y="140" fill="#ff6b81" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">  #   #     #  ## #   # #   #</text>
+<text x="30" y="160" fill="#ff6b81" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">  #   ##### #   # ####   ### </text>
+<text x="30" y="194" fill="#e6edf3" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve"> #### #####  ###  ####  #####</text>
+<text x="30" y="214" fill="#e6edf3" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">#       #   #   # #   # #    </text>
+<text x="30" y="234" fill="#e6edf3" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve"> ###    #   #   # ####  ###  </text>
+<text x="30" y="254" fill="#e6edf3" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">    #   #   #   # #  #  #    </text>
+<text x="30" y="274" fill="#e6edf3" font-size="17" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">####    #    ###  #   # #####</text>
+<text x="470" y="74" fill="#ff6b81" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">root@ubuntu</text>
+<text x="470" y="92" fill="#6e7681" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">-----------</text>
+<text x="470" y="116" fill="#ff6b81" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">OS:</text>
+<text x="502.4" y="116" fill="#8b949e" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">Ubuntu 24.04 LTS x86_64</text>
+<text x="470" y="138" fill="#ff6b81" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">Kernel:</text>
+<text x="539.2" y="138" fill="#8b949e" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">6.17.0-aws</text>
+<text x="470" y="160" fill="#ff6b81" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">Uptime:</text>
+<text x="539.2" y="160" fill="#8b949e" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">4 days, 2 hours</text>
+<text x="470" y="182" fill="#ff6b81" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">Shell:</text>
+<text x="530.0" y="182" fill="#8b949e" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">bash 5.2</text>
+<text x="470" y="204" fill="#ff6b81" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">CPU:</text>
+<text x="511.6" y="204" fill="#8b949e" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">Intel Xeon Platinum</text>
+<text x="470" y="226" fill="#ff6b81" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">Memory:</text>
+<text x="539.2" y="226" fill="#8b949e" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">412MiB / 957MiB</text>
+<text x="30" y="328" fill="#e6edf3" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">Welcome To Tendo Store Auto Script! Type </text>
+<text x="388.75" y="328" fill="#3fb950" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" xml:space="preserve">menu</text>
+<text x="424.35" y="328" fill="#e6edf3" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve"> to start.</text>
+<text x="30" y="352" fill="#e6edf3" font-size="15" font-family="'JetBrains Mono','Courier New',monospace" font-weight="normal" xml:space="preserve">root@ubuntu:~# menu</text>
+<text x="480.0" y="404" fill="#e3b341" font-size="14" font-family="'JetBrains Mono','Courier New',monospace" font-weight="bold" text-anchor="middle" xml:space="preserve">TENDO STORE — MAIN MENU</text>
+<text x="54.0" y="440" fill="#e6edf3" font-size="14" font-family='"JetBrains Mono","Courier New",monospace' xml:space="preserve">[1] SSH &amp; WebSocket Account</text>
+<text x="494.0" y="440" fill="#e6edf3" font-size="14" font-family='"JetBrains Mono","Courier New",monospace' xml:space="preserve">[2] VMess / VLess / Trojan (Xray)</text>
+<text x="54.0" y="464" fill="#e6edf3" font-size="14" font-family='"JetBrains Mono","Courier New",monospace' xml:space="preserve">[3] ZIVPN UDP Account</text>
+<text x="494.0" y="464" fill="#e6edf3" font-size="14" font-family='"JetBrains Mono","Courier New",monospace' xml:space="preserve">[4] Bandwidth Monitor</text>
+<text x="54.0" y="488" fill="#e6edf3" font-size="14" font-family='"JetBrains Mono","Courier New",monospace' xml:space="preserve">[5] Backup &amp; Restore</text>
+<text x="494.0" y="488" fill="#e6edf3" font-size="14" font-family='"JetBrains Mono","Courier New",monospace' xml:space="preserve">[x] Exit</text>
+</svg>
