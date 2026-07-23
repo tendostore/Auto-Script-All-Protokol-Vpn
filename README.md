@@ -58,7 +58,7 @@ Auto installer all-in-one untuk VPS Ubuntu: **Xray (VMess / VLess / Trojan)**, *
 
 ```bash
 apt update -y && apt install -y curl
-curl -O https://raw.githubusercontent.com/tendostore/Auto-Script-All-Protokol-Vpn/main/install.sh
+curl -fsSL -O https://raw.githubusercontent.com/tendostore/Auto-Script-All-Protokol-Vpn/main/install.sh
 chmod +x install.sh
 ./install.sh
 ```
